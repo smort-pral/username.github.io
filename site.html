@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>grab a poem :)</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 50px;
+      background: #fff0f6;
+      cursor: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"%3E%3Ctext x="0" y="20" font-size="20"%3E🎈%3C/text%3E%3C/svg%3E') 12 12, auto;
+    }
+    .poem-container {
+      display: none;
+    }
+    .poem {
+      margin: 20px auto;
+      max-width: 600px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      border: none;
+      background: #ff4081;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #e03570;
+    }
+    .flower-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+      width: 500px; /* increased container width for bigger boxes */
+      margin: 50px auto 0 auto; /* added margin-top to lower the boxes */
+    }
+    .poem-box {
+      width: 150px;  /* increased width */
+      height: 100px;  /* increased height */
+      text-align: center;
+      border-radius: 10px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      transition: 0.3s;
+      white-space: normal; /* allow text wrapping to show complete title */
+      padding: 5px; /* add some padding for better appearance */
+      display: flex; /* use flexbox for centering */
+      justify-content: center; /* horizontal centering */
+      align-items: center; /* vertical centering */
+    }
+    .poem-box:hover {
+      transform: scale(1.1);
+    }
+    /* Force poem titles on poem pages to be a single line */
+    #poem-title {
+      white-space: nowrap;
+    }
+    .feedback-container {
+      margin-top: 40px;
+      padding: 20px;
+      background: #ffe6f0;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+    textarea,
+    input {
+      width: 80%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ff4081;
+      border-radius: 5px;
+      outline: none;
+    }
+    textarea::placeholder,
+    input::placeholder {
+      color: #ff4081;
+    }
+  </style>
+</head>
+<body>
+  <div id="homepage">
+    <h1>🌻 Choose a Poem to Read 🌻</h1>
+    <div class="flower-container" id="poem-list"></div>
+  </div>
+
+  <div id="poem-container" class="poem-container">
+    <h2 id="poem-title"></h2>
+    <p id="poem-content"></p>
+    
+    <div class="feedback-container">
+      <h3>🌷 What do you think about this poem? 🌷</h3>
+      <form id="feedback-form">
+        <textarea id="feedback" placeholder="Write whatever you want here" rows="4"></textarea><br />
+        <textarea id="text" placeholder="Your name"></textarea><br />
+        <button type="button" onclick="sendFeedback()">Say hi to me</button>
+      </form>
+    </div>
+    
+    <button onclick="goBack()">⬅️ Back to Home</button>
+  </div>
+
+  <script>
+    const poems = {
+      "Agenesia": "sun skids across the porcelain scattered on the dining table\nwhere constellations drown in pools of orange juice\ndraped in your shawl is the only lifetime spent on the\nunderside of a waterlily, the waxy film synapses\ntowards the clothesline your family hung from\nfatherless  soundless   the blackbird drags its song\ninto the unicode festering tinfoil forests where\nsentience roars like a waterfall like a quiet taxi ride,\na ride back to the north of the kitchen, where you will\nnever pray again, tally marks in reverse, the charcoal\ncracks off your fingers, five words is all it took\n",
+      "Life through\na Keyhole": "i dream of sickness, malady and\ndissect a word holding it by its throat\nslice through it in the air until\nthe guts sprawl out on your bedsheets\narranging themselves into the\nshape of your spine where\nyou last laid, on the cushion where\nerrant moonbeams spilled across\nyour back, discourse oversteps into\nthe threshold of a nameless god,\nwhen the rain of light floods your\nspeckled voice, and pools at your feet\nmeeting the fragrant wood, drowning\ninto echoes of summer breath that\nspiral down the cloisters and\ncleave at the clouds, i say\nhold it like some object of faith\nthat even the sea refuses to swallow\nlike the light from the belly of a firefly\n",
+      "my ear will\ntake me home": "There is an earthquake in my left ear,\nIn the closet where I store you\nAnd I can hear the blood sloshing around\nHunger for the trumpets that never blow\nAt the endoscopy, they tell me\nThere’s a God, in the fragments of bone\nAnd honey left in the aftermath\n Of the (natural) disaster in the living room\nOf my childhood home\nI have too few azalea blooms\n To make a bouquet big enough for your lungs\nOrange pith will complement my platelets\nMy wounds will sting and glow and close\nWhen I wake up to a setting sun\nThe zephyr will finally call me home.\n",
+      "Gathering": "i wade waist deep in phrases that would make\nme the lasso i never had, colour inside the\ncopulation of branches, in the gaps the sky spills\nwe would grab the firmament and rewrite the\nnames of our fathers and our mothers and our brothers\nwe never had the grace of being\nand the growing and the flourishing\ninto fumes of dandelion seeds and\nthe dictionary of misplaced names\nand their careless owners and the\nway crows tear the sky into two\nand how verse mirrors carcass\n   the way you pick at yourself\nand devour the remains\n\nthere are no words for un-becoming in my language\nwhere you hang up the spears and the spines to dry\nthough when i unravel beneath your fingers\nyou name me earth, the mud that shapes us into being\nwhere i whirl counter-clockwise to\ndraw the planets back into us\ni call krodha the night that turned my hair white\ngrab it like a sickle and slash at the nightingale’s throat\nthe fissures that appear across your cheek\nthe same kind that drove my field to madness last summer\nwhat do you do when there are no shooting stars to wish on?\n",
+      "Repercussions": "i watch as faultlines streak your cheeks\nout of habit, i immediately reach for the flesh of gods\ni keep handy in the bedside drawer\ngrab the black sludge and smother you in it, these\nare gods we forgot to worship\nmy hands, my mouth, my entire being dances\ndances along the edges of the tectonic plates\nas they slide and crease and moan and break apart\ni dip my fingers in every one of those cracks,\nkintsugi, and no, i’m not gentle \ni swallow earthquakes and begot new worlds",
+      "eggs": "i threw out a large buffet of eggs, eggs and eggs\nand eggs and eggs, on a long table laid against the violet wall\ni hand-painted when i was seven and sad and pretending my\nfavourite colour was violet, and the table would have cracked porcelain bowls\nthe cracks filled with golden gum, like you held me whole\nand they'd have eggs in them, oozing golden yellow yolks and bubbly soft whites\ntransformative miracles, magic food, how soft liquid\nturned into any shape you wanted\nthere'd be two chairs at the table, where we can sit beside each other\nin the exact middle of the long table, i don't want to be far from you\nyou can eat, and oh, how i love watching you do it\nyou returned back all of my stolen smiles, took them out of your pocket\nand put them on my palms and the moment you stepped foot\nin my little violet house with its violet walls and its one table\nwith my favourite food and the extra chair i got\nonly for you, i’ve never once stopped\nsmiling since then.",
+      "Postcards from\nToday Afternoon": "i am a bird, apple seeds for eyes and a mane of pony hair brushes,\ni swirl with the planes when they nosedive,\na dance of equals between layers of differently coloured air,\nwhen you hand me a takeout box of impatience for lunch,\ni feed the box to hummingbirds that want to leave the country,\npreservation is a game we play on sunday afternoons,\nwhen i pack your pants, and letters and your nose\nand put it in a tupperware and hide it between my ribs,\ni want to taste you like a poem, one i write,\nvoltage rips through the black shirt you seldom wear,\nthis loveless city saddenly puts even babylon's gardens to shame,\ni unstitch my hands from your bronze fingers, i need\nto pick up the words on our path,\nthe ones i trip on,\nbloodhound silver shone rain prone pronoun noun.\nnoun. hymn, your name, garland of shoestrings.\n\nemails containing wings of herons, when i hold one to my ear,\nthe sirens sing about you, say you're made of the sea,\nand will love me with your seafoam,\ni'm afraid of the melancholy that i drool when im asleep.\nI'm afraid of the spools it uses to reel me in, into the hole\non the surface of the moon, where once my father\nwatered a plant and forgot the seeds.\n\nwe take turns pecking each other's green dreams,\ni can already see the gold rising.",
+      "Day Appetite": "skitter across your skin  wrist thumb back of neck  dance of prairie queens\nlocusts guard sleep  at the foot of my bed\nthimble's child  gash the shape of daffodils\nno way back from the moon  my love stays there  in a lunar pit  one belly of space\nrookie angels  i burn where my plastic wings don't leave the factory\nfruit markets with no change left to give  i speedrun mortality\nluteal summers  in my right hand a sweaty baby  holding a sweaty pineapple\nnights devoid of rainbows  i pull the headphones off the alien\nveins sold  baskets plaited  one hangs from my chest\nlight stolen from stained glass  trinket from a dinosaur's ankle  today's finds\nfull stomach  five mothers  i haven't slept sad in a million years",
+      "Eternal\nEcho": "In time’s embrace, our voices stay,\nLove’s soft echo fades away.",
+      "Autumn’s\nEmbrace": "Leaves descend in golden hue,\nNature sings a song for you.",
+      "Mystic\nMeadows": "In fields of green, magic blooms,\nWhispering secrets to the earth.",
+      "Crimson\nSkies": "The sky burns bright with hues of passion,\nA fiery canvas at day's end."
+    };
+
+    const poemList = document.getElementById("poem-list");
+    const homepage = document.getElementById("homepage");
+    const poemContainer = document.getElementById("poem-container");
+    const poemTitle = document.getElementById("poem-title");
+    const poemContent = document.getElementById("poem-content");
+
+    for (let title in poems) {
+      let div = document.createElement("div");
+      div.className = "poem-box";
+      div.innerText = title;
+      // Assign a random pastel color
+      div.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+      div.onclick = function () {
+        showPoem(title);
+      };
+      poemList.appendChild(div);
+    }
+
+    function showPoem(title) {
+      // Remove newlines for the poem title on the poem page
+      poemTitle.innerText = title.replace(/\n/g, ' ');
+      poemContent.innerText = poems[title];
+      homepage.style.display = "none";
+      poemContainer.style.display = "block";
+    }
+
+    function goBack() {
+      homepage.style.display = "block";
+      poemContainer.style.display = "none";
+    }
+
+    function sendFeedback() {
+      const feedback = document.getElementById("feedback").value;
+      const name = document.getElementById("name").value;
+      const subject = `Poetry Feedback from ${name}`;
+      const body = `Poem: ${poemTitle.innerText}%0D%0AFeedback: ${feedback}%0D%0AName: ${name}`;
+      window.location.href = `mailto:your-email@example.com?subject=${subject}&body=${body}`;
+    }
+  </script>
+<p style="margin-bottom: 45px;"></p>
+    <footer style="background-color: #ff66b2; color: white; text-align: center; padding: 20px;">
+     <p>Made with love</p>
+     <p>pral :3</p>
+    </footer>
+</body>
+</html>
+
+
+
